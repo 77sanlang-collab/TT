@@ -14,6 +14,11 @@ internal fun sourceNameOrNull(source: String): String? = if (isSourceKey(source)
 
 @StringRes
 internal fun sourceNameRes(source: String): Int = when (source) {
+    com.github.bookkeeping.automation.Platforms.XHS -> R.string.source_xhs
+    com.github.bookkeeping.automation.Platforms.DOUYIN -> R.string.source_douyin
+    com.github.bookkeeping.automation.Platforms.XIANYU -> R.string.source_xianyu
+    com.github.bookkeeping.automation.Platforms.SCREENSHOT -> R.string.source_screenshot
+    com.github.bookkeeping.automation.Platforms.CUSTOM -> R.string.source_custom
     SourceKey.PINDUODUO -> R.string.source_pinduoduo
     SourceKey.WECHAT -> R.string.source_wechat
     SourceKey.ALIPAY -> R.string.source_alipay
@@ -38,6 +43,10 @@ internal fun isSourceKey(value: String): Boolean =
     )
 
 internal fun sourceItems() = listOf(
+    SourceUi(com.github.bookkeeping.automation.Platforms.XHS, R.string.source_xhs, R.string.source_desc_shopping),
+    SourceUi(com.github.bookkeeping.automation.Platforms.DOUYIN, R.string.source_douyin, R.string.source_desc_shopping),
+    SourceUi(com.github.bookkeeping.automation.Platforms.XIANYU, R.string.source_xianyu, R.string.source_desc_shopping),
+    SourceUi(com.github.bookkeeping.automation.Platforms.CUSTOM, R.string.source_custom, R.string.source_desc_shopping),
     SourceUi(SourceKey.PINDUODUO, R.string.source_pinduoduo, R.string.source_desc_pinduoduo),
     SourceUi(SourceKey.WECHAT, R.string.source_wechat, R.string.source_desc_wechat),
     SourceUi(SourceKey.ALIPAY, R.string.source_alipay, R.string.source_desc_alipay),

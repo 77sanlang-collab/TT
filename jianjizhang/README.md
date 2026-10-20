@@ -1,12 +1,12 @@
-# 简记账（拼多多试用改版）
+# 简记账（本地多平台试用改版）
 
-基于 [jinyule/bookkeeping](https://github.com/jinyule/bookkeeping)，上游基线为 `e09c8eae9be239d647c49c1d1b851ef24cd792ff`。本改版增加拼多多提交动作待确认、先用后付下单消费和后续扣款关联。使用与边界见 [拼多多试用版说明](docs/pinduoduo-deferred.md)。
+基于 [jinyule/bookkeeping](https://github.com/jinyule/bookkeeping)，上游基线为 `e09c8eae9be239d647c49c1d1b851ef24cd792ff`。本改版增加多平台待确认、可选悬浮分类确认、还款不计支出、离线截图补记、自定义规则和本地诊断。使用与验证边界见 [0.3 本地多平台说明](docs/local-automation-0.3.md)。
 
-自动识别仍需 OPPO 真机验证。37 项 JVM/Room 回归测试通过不等于所有真实支付场景已通过。
+自动识别仍需 OPPO 真机验证。58 项 JVM/Room 回归测试通过不等于所有真实支付场景已通过。
 
 简记账是一个本地优先的 Android 记账 App，界面和核心流程参考 vivo 钱包记账，保留手动记账、报表、搜索、导入和自动记账能力，排除营销、广告、贷款、理财推荐等非记账功能。
 
-当前版本：`0.2.0-pdd`
+当前版本：`0.3.0-local`
 应用包名：`com.github.bookkeeping`
 
 ## 功能

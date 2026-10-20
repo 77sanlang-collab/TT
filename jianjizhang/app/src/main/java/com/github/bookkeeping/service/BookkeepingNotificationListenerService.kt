@@ -31,17 +31,10 @@ class BookkeepingNotificationListenerService : NotificationListenerService() {
         val packageName = sbn.packageName
         val postTime = sbn.postTime
         executor.execute {
-            if (packageName == com.github.bookkeeping.deferred.DeferredParser.PACKAGE) {
-                if (store.isSourceEnabled(com.github.bookkeeping.SourceKey.PINDUODUO) &&
-                    com.github.bookkeeping.deferred.DeferredRepository(BookkeepingApplication.instance.database)
-                        .capture(packageName, listOfNotNull(title, text).joinToString(" "), postTime)) {
-                    com.github.bookkeeping.deferred.DeferredNotifications.post(applicationContext)
-                }
-                return@execute
+            if (com.github.bookkeeping.automation.CaptureEngine(applicationContext).process(
+                    packageName, listOfNotNull(title, text).joinToString("\n"), null, postTime, false)) {
+                com.github.bookkeeping.deferred.DeferredNotifications.post(applicationContext)
             }
-            val candidate = PaymentTextParser.parse(packageName, title, text, postTime) ?: return@execute
-            if (!store.isSourceEnabled(candidate.sourceChannel)) return@execute
-            BookkeepingRepository.insertCandidateBlocking(BookkeepingApplication.instance.database, candidate)
         }
     }
 

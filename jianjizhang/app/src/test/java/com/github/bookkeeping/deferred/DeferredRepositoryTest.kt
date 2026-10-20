@@ -127,7 +127,7 @@ class DeferredRepositoryTest {
             old.version = 2
         }
         val upgraded = Room.databaseBuilder(context, BookkeepingDatabase::class.java, name).allowMainThreadQueries()
-            .addMigrations(BookkeepingDatabase.MIGRATION_2_3).build()
+            .addMigrations(BookkeepingDatabase.MIGRATION_2_3, BookkeepingDatabase.MIGRATION_3_4).build()
         try {
             assertEquals(1234L, upgraded.billDao().getAll().single().amountCents)
             assertTrue(upgraded.deferredOrderDao().getAll().isEmpty())

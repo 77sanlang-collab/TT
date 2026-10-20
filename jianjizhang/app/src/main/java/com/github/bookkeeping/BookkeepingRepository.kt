@@ -87,6 +87,17 @@ class BookkeepingRepository(
         }
     }
 
+    suspend fun setRepayment(id: Long, exclude: Boolean) = withContext(Dispatchers.IO) {
+        database.runInTransaction {
+            require(database.deferredOrderDao().forBill(id) == null) { "关联订单请在订单页处理，不能排除原消费" }
+            val bill = requireNotNull(database.billDao().getById(id))
+            require(bill.direction in setOf(Direction.EXPENSE, Direction.REPAYMENT, Direction.DEFERRED_PAYMENT)) { "收入不能标记还款" }
+            bill.direction = if (exclude) Direction.REPAYMENT else Direction.EXPENSE
+            bill.reviewStatus = ReviewStatus.ACCEPTED; bill.updatedAt = System.currentTimeMillis()
+            database.billDao().update(bill)
+        }
+    }
+
     suspend fun importFrom(uri: Uri): ImportResult = withContext(Dispatchers.IO) {
         val text = context.contentResolver.openInputStream(uri)?.use { stream ->
             // 固定 UTF-8 解码并剥离 BOM，避免首行 header 识别失败

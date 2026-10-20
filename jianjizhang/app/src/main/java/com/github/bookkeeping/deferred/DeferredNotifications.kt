@@ -10,17 +10,18 @@ import com.github.bookkeeping.MainActivity
 
 object DeferredNotifications {
     fun post(context: Context) {
+        com.github.bookkeeping.automation.ConfirmationOverlay.offer(context)
         if (Build.VERSION.SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         val manager = context.getSystemService(NotificationManager::class.java)
         val channel = "deferred_orders"
-        manager.createNotificationChannel(NotificationChannel(channel, "拼多多订单待确认", NotificationManager.IMPORTANCE_DEFAULT))
+        manager.createNotificationChannel(NotificationChannel(channel, "账单待确认", NotificationManager.IMPORTANCE_DEFAULT))
         val intent = Intent(context, MainActivity::class.java).putExtra("open_deferred", true)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pending = PendingIntent.getActivity(context, 102, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val notification = Notification.Builder(context, channel)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("拼多多订单待确认")
-            .setContentText("打开核对金额和分类，确认后计入下单当天的消费")
+            .setContentTitle("账单待确认")
+            .setContentText("打开核对金额、分类与交易是否成功，再确认入账")
             .setVisibility(Notification.VISIBILITY_PRIVATE).setContentIntent(pending).setAutoCancel(true).build()
         try { manager.notify(102, notification) } catch (_: SecurityException) { /* Order stays in review queue. */ }
     }

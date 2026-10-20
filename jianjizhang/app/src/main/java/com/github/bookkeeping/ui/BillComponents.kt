@@ -66,7 +66,7 @@ internal fun BillRow(bill: BillEntity, onClick: () -> Unit) {
             .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val category = if (bill.direction == Direction.DEFERRED_PAYMENT) {
+        val category = if (bill.direction == Direction.REPAYMENT) "还款（不计支出）" else if (bill.direction == Direction.DEFERRED_PAYMENT) {
             if (bill.reviewStatus == ReviewStatus.REVIEW) "待核对扣款" else "扣款结清"
         } else stringResource(CategoryCatalog.labelRes(bill.categoryKey, bill.direction))
         BoxedCategoryInitial(category, bill.direction)
@@ -94,7 +94,7 @@ internal fun BillRow(bill: BillEntity, onClick: () -> Unit) {
             Text(meta, style = MaterialTheme.typography.bodySmall, color = Color(0xFF66706D), maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Text(
-            (when (bill.direction) { Direction.EXPENSE -> "-"; Direction.INCOME -> "+"; else -> "结清 ¥" }) + amountText(bill.amountCents),
+            (when (bill.direction) { Direction.EXPENSE -> "-"; Direction.INCOME -> "+"; else -> "¥" }) + amountText(bill.amountCents),
             style = MaterialTheme.typography.titleMedium,
             color = if (bill.direction == Direction.EXPENSE) Color(0xFF202625) else Color(0xFF2E7D74),
             fontWeight = FontWeight.SemiBold
@@ -120,14 +120,16 @@ private fun BoxedCategoryInitial(category: String, direction: String) {
 }
 
 @Composable
-internal fun BillDetailDialog(bill: BillEntity, onDismiss: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit) {
+internal fun BillDetailDialog(bill: BillEntity, onDismiss: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit, onRepayment: (() -> Unit)? = null) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.bill_detail)) },
         text = {
             Column {
+                if (bill.direction == Direction.REPAYMENT) Text("这笔还款保留记录，不计入消费统计。")
+                onRepayment?.let { action -> TextButton(onClick = action) { Text(if (bill.direction == Direction.REPAYMENT) "恢复计入支出" else "这是还款，不计支出") } }
                 if (bill.direction == Direction.DEFERRED_PAYMENT) Text("先用后付扣款，不重复计入消费。请在首页的先用后付入口中核对或关联。")
-                DetailLine(stringResource(R.string.field_amount), (when (bill.direction) { Direction.EXPENSE -> "-"; Direction.INCOME -> "+"; else -> "结清 ¥" }) + amountText(bill.amountCents))
+                DetailLine(stringResource(R.string.field_amount), (when (bill.direction) { Direction.EXPENSE -> "-"; Direction.INCOME -> "+"; else -> "¥" }) + amountText(bill.amountCents))
                 DetailLine(stringResource(R.string.field_category), stringResource(CategoryCatalog.labelRes(bill.categoryKey, bill.direction)))
                 DetailLine(stringResource(R.string.field_merchant), bill.merchant.takeIf { it.isNotBlank() && !isSourceKey(it) } ?: sourceName(bill.sourceChannel))
                 DetailLine(stringResource(R.string.field_time), dateTimeText(bill.transactionTime))

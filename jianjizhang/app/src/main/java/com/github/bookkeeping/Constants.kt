@@ -1,6 +1,7 @@
 package com.github.bookkeeping
 
 object Direction {
+    const val REPAYMENT = "REPAYMENT"
     const val DEFERRED_PAYMENT = "DEFERRED_PAYMENT"
     const val EXPENSE = "EXPENSE"
     const val INCOME = "INCOME"
@@ -34,6 +35,9 @@ object AccessibilityPackages {
     const val SELF = "com.github.bookkeeping"
 
     val paymentPackages = setOf(
+        "com.xingin.xhs",
+        "com.ss.android.ugc.aweme",
+        "com.taobao.idlefish",
         "com.xunmeng.pinduoduo",         // 拼多多先用后付
         "com.tencent.mm",               // 微信
         "com.eg.android.AlipayGphone",  // 支付宝

@@ -2,6 +2,7 @@ package com.github.bookkeeping.data;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.ColumnInfo;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -11,6 +12,10 @@ public class DeferredOrder {
     @NonNull public String orderNumber = "";
     @NonNull public String product = "";
     @NonNull public String paymentMode = "DEFERRED";
+    @NonNull @ColumnInfo(defaultValue = "'PINDUODUO'") public String platform = "PINDUODUO";
+    @NonNull @ColumnInfo(defaultValue = "''") public String accountName = "";
+    @NonNull @ColumnInfo(defaultValue = "''") public String amountOptions = "";
+    @NonNull @ColumnInfo(defaultValue = "'EXPENSE'") public String direction = "EXPENSE";
     public long amountCents;
     @NonNull public String categoryKey = "shopping";
     @NonNull public String status = "REVIEW";

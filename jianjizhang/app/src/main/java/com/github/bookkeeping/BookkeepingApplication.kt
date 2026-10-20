@@ -15,7 +15,7 @@ class BookkeepingApplication : Application() {
         super.onCreate()
         instance = this
         database = Room.databaseBuilder(this, BookkeepingDatabase::class.java, "bookkeeping.db")
-            .addMigrations(BookkeepingDatabase.MIGRATION_1_2, BookkeepingDatabase.MIGRATION_2_3)
+            .addMigrations(BookkeepingDatabase.MIGRATION_1_2, BookkeepingDatabase.MIGRATION_2_3, BookkeepingDatabase.MIGRATION_3_4)
             .build()
         seedLocalDefinitions()
     }

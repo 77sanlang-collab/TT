@@ -149,4 +149,10 @@
     <string name="category_refund">退款</string>
     <string name="source_pinduoduo">拼多多下单 / 先用后付</string>
     <string name="source_desc_pinduoduo">从提交点击、明确的下单成功页或通知生成待确认订单，核对成功后记消费，付款关联原订单。</string>
+    <string name="source_xhs">小红书支付</string>
+    <string name="source_douyin">抖音支付</string>
+    <string name="source_xianyu">闲鱼支付</string>
+    <string name="source_screenshot">截图补记</string>
+    <string name="source_custom">自定义规则</string>
+    <string name="source_desc_shopping">提交或交易成功后生成待确认，核对总额后入账。</string>
 </resources>

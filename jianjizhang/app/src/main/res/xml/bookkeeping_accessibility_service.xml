@@ -6,4 +6,4 @@
     android:canRetrieveWindowContent="true"
     android:description="@string/accessibility_service_description"
     android:notificationTimeout="500"
-    android:packageNames="com.xunmeng.pinduoduo,com.tencent.mm,com.eg.android.AlipayGphone,com.unionpay,com.vivo.wallet" />
+    android:packageNames="com.xingin.xhs,com.ss.android.ugc.aweme,com.taobao.idlefish,com.xunmeng.pinduoduo,com.tencent.mm,com.eg.android.AlipayGphone,com.unionpay,com.vivo.wallet" />

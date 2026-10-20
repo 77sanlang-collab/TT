@@ -12,8 +12,9 @@ android {
         applicationId = "com.github.bookkeeping"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.2.0-pdd"
+        ndk { abiFilters += "arm64-v8a" }
+        versionCode = 7
+        versionName = "0.3.0-local"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -68,6 +69,7 @@ ksp {
 }
 
 dependencies {
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
     val composeBom = platform("androidx.compose:compose-bom:2026.05.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)

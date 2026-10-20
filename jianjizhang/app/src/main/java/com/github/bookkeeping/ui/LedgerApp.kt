@@ -115,6 +115,7 @@ fun LedgerApp(repository: BookkeepingRepository, openDeferred: Boolean = false) 
     val bills by repository.billsFlow().collectAsStateWithLifecycle(initialValue = emptyList())
     var draft by rememberSaveable(stateSaver = BillDraft.Saver) { mutableStateOf<BillDraft?>(null) }
     var detailBill by remember { mutableStateOf<BillEntity?>(null) }
+    var repaymentBill by remember { mutableStateOf<BillEntity?>(null) }
     var deleteBill by remember { mutableStateOf<BillEntity?>(null) }
     var toast by remember { mutableStateOf<String?>(null) }
 
@@ -167,12 +168,15 @@ fun LedgerApp(repository: BookkeepingRepository, openDeferred: Boolean = false) 
                         onAdd = { draft = BillDraft() },
                         onBillClick = { detailBill = it },
                         onDeferred = { navController.navigate("deferred") },
-                        deferredSummary = "拼多多订单 / 先用后付 · 待确认 ${orders.count { it.status == "REVIEW" }} 笔 · 待扣款 ¥${amountText(orders.filter { it.status == "OPEN" && it.paymentMode == "DEFERRED" }.sumOf { it.amountCents })}"
+                        deferredSummary = "待确认 / 平台订单 · 待确认 ${orders.count { it.status == "REVIEW" }} 笔 · 待扣款 ¥${amountText(orders.filter { it.status == "OPEN" && it.paymentMode == "DEFERRED" }.sumOf { it.amountCents })}"
                     )
                 }
             }
+            composable("local-tools") {
+                AutomationToolsScreen(onBack = { navController.popBackStack() }, onOrders = { navController.navigate("deferred") })
+            }
             composable("deferred") {
-                DeferredScreen(deferred, bills, onBack = { navigateToTopLevel(ROUTE_HOME) })
+                DeferredScreen(deferred, bills, onBack = { navigateToTopLevel(ROUTE_HOME) }, onTools = { navController.navigate("local-tools") })
             }
             composable(ROUTE_REPORTS) {
                 ScreenBox(TAG_SCREEN_REPORTS) {
@@ -280,12 +284,25 @@ fun LedgerApp(repository: BookkeepingRepository, openDeferred: Boolean = false) 
                     transactionTime = bill.transactionTime
                 )
             },
+            onRepayment = if (bill.direction in setOf(Direction.EXPENSE, Direction.REPAYMENT, Direction.DEFERRED_PAYMENT) && orders.none { it.billId == bill.id || it.settlementBillId == bill.id }) {
+                { repaymentBill = bill; detailBill = null }
+            } else null,
             onDelete = {
                 detailBill = null
                 if (orders.any { it.billId == bill.id || it.settlementBillId == bill.id }) navController.navigate("deferred")
                 else deleteBill = bill
             }
         )
+    }
+
+    repaymentBill?.let { bill ->
+        val exclude = bill.direction != Direction.REPAYMENT
+        AlertDialog(onDismissRequest = { repaymentBill = null }, title = { Text(if (exclude) "还款不计支出" else "恢复计入支出") },
+            text = { Text(if (exclude) "保留这笔还款记录，但从消费统计排除。请确认原购物消费已经登记；利息或手续费需另记支出。" else "这笔记录将重新计入消费，请确认不是已经记过消费的还款。") },
+            confirmButton = { TextButton(onClick = { scope.launch {
+                try { repository.setRepayment(bill.id, exclude) } catch (e: Exception) { toast = e.message }
+                repaymentBill = null
+            } }) { Text("确认") } }, dismissButton = { TextButton(onClick = { repaymentBill = null }) { Text("取消") } })
     }
 
     deleteBill?.let { bill ->

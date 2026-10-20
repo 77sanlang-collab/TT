@@ -6,8 +6,8 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(
-        entities = {BillEntity.class, CategoryEntity.class, SourceSettingEntity.class, DeferredOrder.class},
-        version = 3,
+        entities = {BillEntity.class, CategoryEntity.class, SourceSettingEntity.class, DeferredOrder.class, IgnoredFingerprint.class},
+        version = 4,
         exportSchema = true
 )
 public abstract class BookkeepingDatabase extends RoomDatabase {
@@ -18,6 +18,18 @@ public abstract class BookkeepingDatabase extends RoomDatabase {
     public abstract CategoryDao categoryDao();
 
     public abstract SourceSettingDao sourceSettingDao();
+
+    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE deferred_orders ADD COLUMN platform TEXT NOT NULL DEFAULT 'PINDUODUO'");
+            database.execSQL("ALTER TABLE deferred_orders ADD COLUMN accountName TEXT NOT NULL DEFAULT ''");
+            database.execSQL("ALTER TABLE deferred_orders ADD COLUMN amountOptions TEXT NOT NULL DEFAULT ''");
+            database.execSQL("ALTER TABLE deferred_orders ADD COLUMN direction TEXT NOT NULL DEFAULT 'EXPENSE'");
+            database.execSQL("CREATE TABLE IF NOT EXISTS ignored_fingerprints (fingerprint TEXT NOT NULL PRIMARY KEY, expiresAt INTEGER NOT NULL)");
+            database.execSQL("INSERT OR IGNORE INTO ignored_fingerprints SELECT fingerprint, 9223372036854775807 FROM deferred_orders WHERE status = 'CANCELLED'");
+            database.execSQL("DELETE FROM deferred_orders WHERE status = 'CANCELLED'");
+        }
+    };
 
     public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override public void migrate(SupportSQLiteDatabase database) {

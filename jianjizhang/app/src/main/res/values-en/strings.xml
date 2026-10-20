@@ -149,4 +149,10 @@
     <string name="category_refund">Refund</string>
     <string name="source_pinduoduo">Pinduoduo orders / Pay later</string>
     <string name="source_desc_pinduoduo">Review detected submissions and successful orders before recording a purchase; link later payments to the original order.</string>
+    <string name="source_xhs">Xiaohongshu</string>
+    <string name="source_douyin">Douyin Pay</string>
+    <string name="source_xianyu">Xianyu</string>
+    <string name="source_screenshot">Screenshot import</string>
+    <string name="source_custom">Custom rules</string>
+    <string name="source_desc_shopping">Review detected orders and completed payments before recording.</string>
 </resources>

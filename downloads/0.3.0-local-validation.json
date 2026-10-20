@@ -1,0 +1,25 @@
+{
+  "version": "0.3.0-local",
+  "versionCode": 7,
+  "databaseVersion": 4,
+  "sourceDirectory": "jianjizhang",
+  "sourceBaseCommit": "e524a2f7dd16486d5af117f3800a916b99df66c2",
+  "upstreamBase": "jinyule/bookkeeping@e09c8eae9be239d647c49c1d1b851ef24cd792ff",
+  "tests": 58,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "lintErrors": 0,
+  "lintWarnings": 14,
+  "apkSHA256": "8b28bf83419d4a218d374d9701aeaec5e5ba511ea5b35beccf573c9326fcef79",
+  "bytes": 34858317,
+  "abis": [
+    "arm64-v8a"
+  ],
+  "internetPermission": false,
+  "bundledChineseModelFiles": 4,
+  "signatureMatchesEarlierTrial": true,
+  "nativeLibrary16KbAlignmentChecked": true,
+  "deviceValidation": "Not tested on OPPO PKB110. Actual accessibility events, overlay behavior, image decoding and native OCR inference require phone testing.",
+  "screenshotFixtures": "Text/price regression fixtures derived from screenshots, not real image OCR end-to-end tests."
+}

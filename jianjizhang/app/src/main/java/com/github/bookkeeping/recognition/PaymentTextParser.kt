@@ -13,7 +13,7 @@ import kotlin.math.roundToLong
 
 object PaymentTextParser {
     private val explicitExpense = listOf(
-        "支付", "付款", "支出", "消费", "扣款", "转出", "付款成功", "交易成功",
+        "还款", "支付", "付款", "支出", "消费", "扣款", "转出", "付款成功", "交易成功",
         "paid", "payment", "spent", "purchase", "debit", "charged", "sent"
     )
     private val explicitIncome = listOf(
@@ -44,13 +44,14 @@ object PaymentTextParser {
         val sourceAllowed = source != SourceKey.GENERIC || looksTransactional(raw)
         if (!sourceAllowed) return null
 
-        val amount = extractAmount(raw) ?: return null
+        val resolution = com.github.bookkeeping.automation.AmountReader.read(raw)
+        val amount = resolution.cents ?: if (resolution.choices.size > 1) 0L else extractAmount(raw) ?: return null
         val direction = detectDirection(raw) ?: return null
         val merchant = extractMerchant(raw, direction).ifBlank { source }
         val category = guessCategory(raw, direction, merchant)
         val transactionTime = extractTimestamp(raw) ?: nowMillis
         val confidence = score(raw, source, merchant, direction)
-        val reviewStatus = if (confidence >= 0.70) ReviewStatus.ACCEPTED else ReviewStatus.REVIEW
+        val reviewStatus = if (amount > 0 && confidence >= 0.70) ReviewStatus.ACCEPTED else ReviewStatus.REVIEW
         val fingerprint = fingerprint(source, amount, direction, merchant, transactionTime)
 
         return RecognitionCandidate(
@@ -74,7 +75,7 @@ object PaymentTextParser {
      * 因此额外要求文本含明确的"支付完成态"关键词，避免把界面上的金额数字误判为交易。
      */
     private val completionKeywords = listOf(
-        "支付成功", "交易成功", "支付完成", "支付凭证", "已支付", "已扣费", "扣款成功", "扣费成功", "扣款凭证",
+        "还款成功", "已还款", "成功还款", "支付成功", "交易成功", "支付完成", "支付凭证", "已支付", "已扣费", "扣款成功", "扣费成功", "扣款凭证",
         "收款到账", "收款成功", "到账", "入账", "退款成功", "退款到账",
         "paid", "payment successful", "payment receipt", "transaction successful", "received"
     )
@@ -143,6 +144,8 @@ object PaymentTextParser {
 
     fun shouldIgnore(raw: String): Boolean {
         val normalized = raw.lowercase(Locale.ROOT)
+        if (listOf("支付成功", "付款成功", "已支付", "支付凭证", "扣款成功", "还款成功").any(raw::contains) &&
+            com.github.bookkeeping.automation.AmountReader.read(raw).choices.isNotEmpty()) return false
         val ignored = ignoreKeywords.any { normalized.contains(it.lowercase(Locale.ROOT)) }
         if (!ignored) return false
         if ((normalized.contains("退款") || normalized.contains("refund")) && extractAmount(raw) != null) return false
@@ -185,7 +188,7 @@ object PaymentTextParser {
         val normalized = raw.lowercase(Locale.ROOT)
         val incomeHit = explicitIncome.any { normalized.contains(it.lowercase(Locale.ROOT)) }
         val expenseHit = explicitExpense.any { normalized.contains(it.lowercase(Locale.ROOT)) }
-        val isRefund = normalized.contains("退款") || normalized.contains("refund")
+        val isRefund = listOf("退款成功", "退款到账", "已退款", "收到退款", "退款金额", "支付退款").any(normalized::contains) || normalized.contains("refund")
         return when {
             // 退款语义优先于支出关键词（如"支付退款"应为收入）
             isRefund -> Direction.INCOME
