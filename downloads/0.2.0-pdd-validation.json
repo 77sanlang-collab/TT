@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0-pdd",
+  "versionCode": 6,
+  "upstream": "jinyule/bookkeeping",
+  "upstreamCommit": "e09c8eae9be239d647c49c1d1b851ef24cd792ff",
+  "sourceCommit": "84dd1039fa2ba74f883da7373740319753c44c59",
+  "tests": 37,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "lintErrors": 0,
+  "lintWarnings": 5,
+  "apkSHA256": "de7f0e9019fc7968c2077d58e0aa5bf35b66f2c82855cd736703d2fee46e20dd",
+  "deviceValidation": "Not tested on OPPO PKB110; screenshots used to derive parser fixtures, not accessibility-node evidence."
+}

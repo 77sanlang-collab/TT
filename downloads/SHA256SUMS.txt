@@ -1,1 +1,2 @@
 635c21f7a18a02752e61df6dc8970510dbf3ffb9edcdd73d04020824ea204792  jianjizhang-0.1.4-debug.apk
+de7f0e9019fc7968c2077d58e0aa5bf35b66f2c82855cd736703d2fee46e20dd  jianjizhang-0.2.0-pdd-debug.apk
